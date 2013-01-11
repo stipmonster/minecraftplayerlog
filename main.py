@@ -4,24 +4,27 @@ import sys
 import re
 #import time
 import datetime
+import os
+from dateutil.parser import *
 
 #reg expression for date
 link_re = re.compile('([0-9][0-9]\-[0-9][0-9]-[0-9\:\-\ ]*)')
 dataArray =[]
 #print 'Number of arguments:', len(sys.argv), 'arguments.'
 #print 'Argument List:', str(sys.argv)
-for file in sys.argv:
-    with open(file) as f:
-        for line in f:
-            links = link_re.findall(line)
+files = [f for f in os.listdir('.') if os.path.isfile(f)]
+for file in files:
+    if  file.endswith(".properties"):
+        with open(file) as f:
+            for line in f:
+                links = link_re.findall(line)
             
-            if str(links) != "[]":
-                playertime =datetime.datetime.strptime(links[0].strip(), "%d-%m-%Y %H:%M:%S")
-                #print playertime
-                tuplesdata=playertime, line
-                dataArray.append(tuplesdata)
-                #print time.strftime("%d-%m-%Y %H:%M:%S", time.gmtime())
-                #print links[0]
+                if str(links) != "[]":
+                    playertime =parse(links[0].strip())
+                    #print playertime
+                    tuplesdata=playertime, line
+                    dataArray.append(tuplesdata)
+
 
 dataArray.sort(key=lambda tup: tup[0])
 output=map(lambda x: x[1], dataArray)
